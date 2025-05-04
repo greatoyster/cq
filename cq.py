@@ -2,11 +2,50 @@
 import asyncio
 from collections import deque
 import shlex
+from pathlib import Path
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.widgets import Header, Footer, Log, ListView, ListItem, Label, Static, Input
 from textual.message import Message
 from textual.reactive import reactive
+
+# CSS content embedded directly
+CSS_CONTENT = """
+/* command_queue.css */
+Screen {
+    layout: grid;
+    grid-size: 2 1;
+    grid-gutter: 0 0;
+    /* height: 100%; */
+}
+
+#left-pane {
+    column-span: 1;
+    border: round $accent;
+}
+
+#right-pane {
+    column-span: 1;
+    border: round $accent;
+    display: block; /* Ensure children stack vertically */
+}
+
+Log {
+    height: 1fr;
+    border-bottom: dashed $accent;
+}
+
+#queue-list {
+    height: 2fr; /* Takes up remaining space */
+    border-bottom: hidden $accent;
+}
+
+#command-input {
+    height: 1fr; /* Fixed height for the input */
+    border: none;
+    border-top: thick $accent; /* Add border only at the top */
+}
+"""
 
 class CommandExecutor(Static):
     """A non-visual widget to manage and execute commands."""
@@ -82,7 +121,8 @@ class CommandExecutor(Static):
 class CommandQueueApp(App):
     """A Textual app with a terminal view and command queue."""
 
-    CSS_PATH = "cq.css"
+    # Use the embedded CSS content
+    CSS = CSS_CONTENT
     BINDINGS = [("q", "quit", "Quit")]
 
     def compose(self) -> ComposeResult:
